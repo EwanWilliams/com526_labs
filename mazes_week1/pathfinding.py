@@ -6,51 +6,45 @@ def a_star(maze, start, goal):
     p_queue = []
     heapq.heappush(p_queue, (0, start))
 
-    # Proving some code for you as they will be helpful shortly
     directions = {
         "right": (0, 1),
         "left": (0, -1),
         "up": (-1, 0),
         "down": (1, 0)
     }
-    predecessors = {start: None} # Enables the get_path function to backtrack
-    g_values = {start: 0} # The g score for each cell
 
-    while len(p_queue) > 0: # loop through the queue, this is an infinite loop that will only stop if the queue is empty
-        current_cell = heapq.heappop(p_queue)[1] # get this from the priority queue
+    predecessors = {start: None}  # enables the get_path function to backtrack
+    g_values = {start: 0}  # the g score for each cell
 
-        if current_cell == goal: # Check if the current cell is the goal:
+    while len(p_queue) > 0:  # loop through the queue, only stop if the queue is empty
+        current_cell = heapq.heappop(p_queue)[1]  # get this from the priority queue
+
+        if current_cell == goal:  # check if the current cell is the goal
             return get_path(predecessors, start, goal)
 
-        # Now lets look at where we can move to from the current cell.
-        # For each direction do the following:
+        for direction in directions.values():
             # Figure out the coordinates of the neighbouring cell - the offsets are provided above.
-            # For example, if the direction is 'up' then you would deduct 1 from the y coordinate
+            neighbour = []
+            for i in range(len(current_cell)):
+                neighbour.append(current_cell[i] + direction[i])
+            neighbour = tuple(neighbour)
 
-            # Check that this neighbouring cell is actually a valid move.
-            # An invalid move would be one that goes outside the bounds of the map.
-            # A cell that contains an 'x' is also invalid.
-            # It should also not consider a cell that already has a value stored in the g_values dict created above
-            # If the cell is viable:
-                # We need to calculate the cost of the move!
-                # Our current cell and its cost should be stored in the dictionary g_values
-                # Retrieve that value - add 1 to it and we have out cost for the neighbouring cell
+            # three checks to see if current direction neighbour should be skipped
+            if not (0 <= neighbour[0] <= 9 and 0 <= neighbour[1] <= 9):  # if coord is out of bounds
+                continue
+            if maze[neighbour[0]][neighbour[1]] == 'x':  # if coord is an obstacle
+                continue
+            if neighbour in g_values:  # if coord already has been checked
+                continue
 
-                # Add the neighbouring cell and its cost to the g_values dictionary,
-                # Where the (x, y) coordinates are the key and the cost is the value
+            cost = g_values[current_cell] + 1
+            g_values[neighbour] = cost
+            h_score = utils.manhattan_distance(neighbour, goal)
+            f_score = h_score + cost
 
-                # Now calculate the H score.
-                # In the utils.py file there is a manhatten_distance function.
-                # Use this to calculate the distance between the neighbouring cell and the goal.
-                # The value it returns will be the H score
+            heapq.heappush(p_queue, (f_score, neighbour))
 
-                # Using that we can calculate the overall F score by adding the cost and the H score
-
-                # Now we have its F-Score we can add this neighbouring cell (a viable move) to our priority queue
-                # You should add the cell coords (x, y) to the queue and the prioirty value should be the f-score
-
-                # Allows the get_path function to backtrack later, do not change
-                predecessors[neighbour] = current_cell
+            predecessors[neighbour] = current_cell
     return None
 
 
