@@ -5,7 +5,7 @@ import heapq
 def a_star(maze, start, goal):
     p_queue = []
     heapq.heappush(p_queue, (0, start))
-
+    maze_size = len(maze[0])
     directions = {
         "right": (0, 1),
         "left": (0, -1),
@@ -27,14 +27,14 @@ def a_star(maze, start, goal):
             neighbour = []
             for i in range(len(current_cell)):
                 neighbour.append(current_cell[i] + direction[i])
-            neighbour = tuple(neighbour)
+            neighbour = (neighbour[0], neighbour[1])
 
             # three checks to see if current direction neighbour should be skipped
-            if not (0 <= neighbour[0] <= 9 and 0 <= neighbour[1] <= 9):  # if coord is out of bounds
-                continue
-            if maze[neighbour[0]][neighbour[1]] == 'x':  # if coord is an obstacle
+            if not (0 <= neighbour[0] <= maze_size and 0 <= neighbour[1] <= maze_size):  # if coord is out of bounds
                 continue
             if neighbour in g_values:  # if coord already has been checked
+                continue
+            if maze[neighbour[1]][neighbour[0]] == 'x':
                 continue
 
             cost = g_values[current_cell] + 1
@@ -60,7 +60,7 @@ def get_path(predecessors, start, goal):
 
 
 if __name__ == "__main__":
-    maze_map = utils.import_maze("mazes/maze1.txt")     # Change the path as required.
+    maze_map = utils.import_maze("mazes/maze2.txt")     # Change the path as required.
     start = utils.locate(maze_map, 's')
     goal = utils.locate(maze_map, 'g')
     # Print out the path returned by the a_star function (after you have completed it)
