@@ -15,7 +15,24 @@ class Robot(Agent):
         pass
 
     def act(self, environment):
-        pass
+        neighbours = self.sense(environment)
+        # decide what to do
+
+        # if decision blah blah
+        # just assuming a random move into viable coord rn
+        new_position = self.select_random_move(neighbours)
+        self.move(environment, new_position)
+
+    
+    def select_random_move(self, neighbours):
+        valid_moves = []
+
+        for cell in neighbours:
+            if neighbours[cell] == " ":
+                valid_moves.append(cell)
+        
+        return random.choice(valid_moves)
+
 
     def move(self, environment, to):
         if environment.move_to(self.position, to):
@@ -65,8 +82,10 @@ class Robot(Agent):
         path.append(start)
         path.reverse()
         return path
-
+    
+    # i dont really get why it wants these parameters, gonna do my own one below
     def viable_move(self, x, y, types):
+        
         # You will need to do this one
         # Do not move in to a cell containing an obstacle (represented by 'x')
         # Do not move in to a cell containing a flame

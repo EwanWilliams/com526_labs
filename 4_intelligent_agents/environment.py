@@ -43,6 +43,14 @@ class Environment:
         for pos in positions:
             cells[pos] = self.world[pos[1]][pos[0]]
         return cells
+    
+    def move_to(self, current, new):
+        if self.world[current[1]][current[0]] != " ":
+            moving_char = self.world[current[1]][current[0]]
+            self.world[current[1]][current[0]] = " "
+            self.world[new[1]][new[0]] = moving_char
+            return True
+        return False
 
     def __str__(self):
         out = ""
@@ -60,8 +68,9 @@ if __name__ == "__main__":
     robot1 = e.world[5][5]
     #test_robot = e.world[2][5]
 
-    for i in range(1):  # Change 1 simulate more moves. I.e. 100 would simulate 100 moves
+    for i in range(20):  # Change 1 simulate more moves. I.e. 100 would simulate 100 moves
         # Call the act method for each agent operating in the environment
         print(e)
         water.act(e)
-        
+        robot1.act(e)
+        input()
