@@ -20,6 +20,9 @@ class Robot(Agent):
     def move(self, environment, to):
         if environment.move_to(self.position, to):
             self.position = to
+    
+    def fill_tank(self):
+        self.water_level = 100
 
     def __str__(self):
         return '🚒'
