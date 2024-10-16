@@ -49,7 +49,7 @@ class Environment:
         for row in self.world:
             for col in row:
                 out += f"{col}\t"
-            out += "\n\n"
+            out += "\n"
         return out
 
 
@@ -58,10 +58,10 @@ if __name__ == "__main__":
 
     water = e.world[1][5]
     robot1 = e.world[5][5]
+    #test_robot = e.world[2][5]
 
     for i in range(1):  # Change 1 simulate more moves. I.e. 100 would simulate 100 moves
         # Call the act method for each agent operating in the environment
-        # print(e)
+        print(e)
         water.act(e)
         
-

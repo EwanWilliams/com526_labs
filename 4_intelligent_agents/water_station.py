@@ -1,4 +1,5 @@
 from agent import Agent
+from robot import Robot
 import utils
 
 class WaterStation(Agent):
@@ -9,19 +10,19 @@ class WaterStation(Agent):
     def decide(self, percept):
         for cell in percept:
             if utils.is_robot(percept[cell]):
-                return "fill", percept[cell]
-            return "idle", None
+                return percept[cell]
+        return None
 
     def act(self, environment):
-        decision =  self.decide(self.sense(environment))
+        robot_present = self.decide(self.sense(environment))
 
-        if decision[0] == "fill":
-            return decision[1]
-        elif decision[0] == "idle":
-            return None
-        else:
-            pass
+        if robot_present:
+            robot_present.fill_tank()
+            return True
         
-
+        return False
+            
+        
     def __str__(self):
         return '💧'
+    
