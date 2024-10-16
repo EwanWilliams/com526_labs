@@ -51,6 +51,13 @@ class Environment:
             self.world[new[1]][new[0]] = moving_char
             return True
         return False
+    
+    def extinguish(self, fire):
+        if utils.is_flame(self.world[fire[1]][fire[0]]):
+            self.world[fire[1]][fire[0]] = " "
+            return True
+        return False
+        
 
     def __str__(self):
         out = ""
@@ -67,10 +74,13 @@ if __name__ == "__main__":
     water = e.world[1][5]
     robot1 = e.world[5][5]
     #test_robot = e.world[2][5]
-
+    print(e)
+    input()
+    
     for i in range(20):  # Change 1 simulate more moves. I.e. 100 would simulate 100 moves
         # Call the act method for each agent operating in the environment
-        print(e)
+        
         water.act(e)
         robot1.act(e)
+        print(e)
         input()

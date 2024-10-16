@@ -12,16 +12,38 @@ class Robot(Agent):
         self.water_station_location = None
 
     def decide(self, percept: dict[tuple[int, int], ...]):
-        pass
+        flames = []
+
+        for cell in percept:
+            if utils.is_flame(percept[cell]):
+                flames.append(cell)
+            #elif utils.is_water_station(percept[cell]):
+            #    pass
+            #elif utils.is_robot(percept[cell]):
+            #    pass
+        
+        if len(flames) > 0:
+            return "firefight", random.choice(flames)
+        
+        return None
+
 
     def act(self, environment):
         neighbours = self.sense(environment)
-        # decide what to do
-
-        # if decision blah blah
-        # just assuming a random move into viable coord rn
-        new_position = self.select_random_move(neighbours)
-        self.move(environment, new_position)
+        action = self.decide(neighbours)
+        
+        if action == None: # random move
+            new_position = self.select_random_move(neighbours)
+            self.move(environment, new_position)
+        elif action[0] == "firefight": # fight fire
+            self.firefight(environment, action[1])
+        
+        print(f"Water level: {self.water_level}")
+            
+        
+    def firefight(self, environment, fire):
+        environment.extinguish(fire)
+        self.water_level -= 5
 
     
     def select_random_move(self, neighbours):
