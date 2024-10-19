@@ -73,14 +73,18 @@ if __name__ == "__main__":
 
     water = e.world[1][5]
     robot1 = e.world[5][5]
-    #test_robot = e.world[2][5]
+    robot1.water_level = 5
+    robot1.water_station_location.append((5,1))
     print(e)
     input()
     
-    for i in range(20):  # Change 1 simulate more moves. I.e. 100 would simulate 100 moves
+    for i in range(1000):  # Change 1 simulate more moves. I.e. 100 would simulate 100 moves
         # Call the act method for each agent operating in the environment
         
         water.act(e)
         robot1.act(e)
+        print(f"Water level: {robot1.water_level}")
+        print(f"Water station: {robot1.water_station_location}")
         print(e)
+        print(i)
         input()

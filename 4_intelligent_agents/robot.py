@@ -9,7 +9,7 @@ class Robot(Agent):
     def __init__(self, position: tuple[int, int]):
         super().__init__(position)
         self.water_level = 100
-        self.water_station_location = None
+        self.water_station_location = []
 
     def decide(self, percept: dict[tuple[int, int], ...]):
         flames = []
@@ -17,12 +17,15 @@ class Robot(Agent):
         for cell in percept:
             if utils.is_flame(percept[cell]):
                 flames.append(cell)
-            #elif utils.is_water_station(percept[cell]):
-            #    pass
+            elif utils.is_water_station(percept[cell]) and cell not in self.water_station_location:
+                self.water_station_location.append(cell)
             #elif utils.is_robot(percept[cell]):
             #    pass
         
-        if len(flames) > 0:
+
+        if self.water_level == 0 and len(self.water_station_location) > 0:
+            return "fill tank"
+        elif len(flames) > 0 and self.water_level > 0:
             return "firefight", random.choice(flames)
         
         return None
@@ -35,10 +38,11 @@ class Robot(Agent):
         if action == None: # random move
             new_position = self.select_random_move(neighbours)
             self.move(environment, new_position)
+        elif action == "fill tank": # go to water station
+            path = self.calc_path(self.position, self.water_station_location[0], environment) # will currently always go to the first water station found, pls change
+            print(path)
         elif action[0] == "firefight": # fight fire
             self.firefight(environment, action[1])
-        
-        print(f"Water level: {self.water_level}")
             
         
     def firefight(self, environment, fire):
@@ -67,7 +71,7 @@ class Robot(Agent):
         return '🚒'
 
     # MANHATTAN DISTANCE FUNCTIONS
-    def calc_path(self, start, goal, avoid):
+    def calc_path(self, start, goal, e):
         p_queue = []
         heapq.heappush(p_queue, (0, start))
 
@@ -88,7 +92,7 @@ class Robot(Agent):
                 row_offset, col_offset = directions[direction]
                 neighbour = (current_cell[0] + row_offset, current_cell[1] + col_offset)
 
-                if self.viable_move(neighbour[0], neighbour[1], avoid) and neighbour not in g_values:
+                if self.viable_move(neighbour[0], neighbour[1], e) and neighbour not in g_values:
                     cost = g_values[current_cell] + 1
                     g_values[neighbour] = cost
                     f_value = cost + self.calc_distance(goal, neighbour)
@@ -105,17 +109,11 @@ class Robot(Agent):
         path.reverse()
         return path
     
-    # i dont really get why it wants these parameters, gonna do my own one below
-    def viable_move(self, x, y, types):
-        
-        # You will need to do this one
-        # Do not move in to a cell containing an obstacle (represented by 'x')
-        # Do not move in to a cell containing a flame
-        # Do not move in to a cell containing a water station
-        # Do not move in to a cell containing a robot.
-        # In fact, the only valid cells are blank ones
-        # Also, do not go out of bounds.
-        pass
+    def viable_move(self, x, y, e):
+        print(e.get_cells([(x,y)]))
+        if e.get_cells([(x,y)])[(x,y)] == " ":
+            return True
+        return False
 
     def calc_distance(self, point1: tuple[int, int], point2: tuple[int, int]):
         x1, y1 = point1
